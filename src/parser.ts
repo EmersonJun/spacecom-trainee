@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as readline from "readline";
 import { Posicionamento } from "./types";
 
 function parseLinha(linha: string): Posicionamento | null {
@@ -25,14 +26,22 @@ function parseLinha(linha: string): Posicionamento | null {
   };
 }
 
-export function lerDataset(caminho: string): Map<string, Posicionamento[]> {
-  const conteudo = fs.readFileSync(caminho, "utf-8");
-  const linhas = conteudo.split("\n");
-  const grupos = new Map<string, Posicionamento[]>();
+export async function* gruposDoDataset(caminho: string): AsyncGenerator<Posicionamento[]> {
+  const stream = fs.createReadStream(caminho, { encoding: "utf-8" });
+  const rl = readline.createInterface({ input: stream, crlfDelay: Infinity });
 
+  let bufferTimestamp: string | null = null;
+  let buffer: Posicionamento[] = [];
+  let primeiraLinha = true;
   let linhasInvalidas = 0;
-  for (let i = 1; i < linhas.length; i++) {
-    const linha = linhas[i].trim();
+
+  for await (const linhaBruta of rl) {
+    if (primeiraLinha) {
+      primeiraLinha = false;
+      continue;
+    }
+
+    const linha = linhaBruta.trim();
     if (!linha) continue;
 
     const pos = parseLinha(linha);
@@ -41,14 +50,20 @@ export function lerDataset(caminho: string): Map<string, Posicionamento[]> {
       continue;
     }
 
-    const lista = grupos.get(pos.timestamp);
-    if (lista) lista.push(pos);
-    else grupos.set(pos.timestamp, [pos]);
+    if (bufferTimestamp === null) {
+      bufferTimestamp = pos.timestamp;
+      buffer = [pos];
+    } else if (pos.timestamp === bufferTimestamp) {
+      buffer.push(pos);
+    } else {
+      yield buffer;
+      bufferTimestamp = pos.timestamp;
+      buffer = [pos];
+    }
   }
 
+  if (buffer.length > 0) yield buffer;
   if (linhasInvalidas > 0) {
     console.warn(`  (${linhasInvalidas} linhas invalidas ignoradas em ${caminho})`);
   }
-
-  return grupos;
 }

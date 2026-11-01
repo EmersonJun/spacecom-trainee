@@ -5,7 +5,6 @@ type TipoEncontro = "generico" | "faccao" | "protetiva";
 
 const LIMITE_METROS = 20;
 
-
 function classificar(a: Posicionamento, b: Posicionamento): TipoEncontro {
   const aEhVitimaDeB = a.medidaProtetiva && a.idsRestricaoMedida.includes(String(b.idMonitorado));
   const bEhVitimaDeA = b.medidaProtetiva && b.idsRestricaoMedida.includes(String(a.idMonitorado));
@@ -16,7 +15,7 @@ function classificar(a: Posicionamento, b: Posicionamento): TipoEncontro {
   return "generico";
 }
 
-function detectarNoTimestamp(timestamp: string, posicoes: Posicionamento[]): Encontro[] {
+export function detectarEncontrosNoGrupo(posicoes: Posicionamento[]): Encontro[] {
   const encontros: Encontro[] = [];
 
   for (let i = 0; i < posicoes.length; i++) {
@@ -28,7 +27,7 @@ function detectarNoTimestamp(timestamp: string, posicoes: Posicionamento[]): Enc
         encontros.push({
           tipo: classificar(a, b),
           monitoradosEncontro: [a.idMonitorado, b.idMonitorado],
-          timestamp,
+          timestamp: a.timestamp,
           posicoes: {
             [a.idMonitorado]: { lat: a.latitude, lon: a.longitude },
             [b.idMonitorado]: { lat: b.latitude, lon: b.longitude },
@@ -40,12 +39,4 @@ function detectarNoTimestamp(timestamp: string, posicoes: Posicionamento[]): Enc
   }
 
   return encontros;
-}
-
-export function detectarEncontros(grupos: Map<string, Posicionamento[]>): Encontro[] {
-  const todos: Encontro[] = [];
-  for (const [timestamp, posicoes] of grupos) {
-    todos.push(...detectarNoTimestamp(timestamp, posicoes));
-  }
-  return todos;
 }

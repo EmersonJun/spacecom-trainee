@@ -1,6 +1,6 @@
 {
   "name": "spacecom-desafio-encontros",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Desafio Trainee Tech Spacecom 2027 - deteccao de encontros",
   "main": "dist/main.js",
   "scripts": {
