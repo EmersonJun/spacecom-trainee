@@ -1,6 +1,5 @@
 node_modules/
 dist/
-output/*.json
-data/*.txt
-data/*.json
+data/dataset6.txt
+data/dataset7.txt
 *.log

@@ -1,15 +1,17 @@
 export interface Posicionamento {
   idMonitorado: number;
-  faccaoMonitorado: string | null;
-  timestamp: string;
+  faccaoMonitorado: string | null; 
+  timestamp: string; 
   latitude: number;
   longitude: number;
   medidaProtetiva: boolean;
-  idsRestricaoMedida: string[];
+  idsRestricaoMedida: Set<number>; 
 }
 
+export type TipoEncontro = "generico" | "faccao" | "protetiva";
+
 export interface Encontro {
-  tipo: "generico" | "faccao" | "protetiva";
+  tipo: TipoEncontro;
   monitoradosEncontro: [number, number];
   timestamp: string;
   posicoes: Record<string, { lat: number; lon: number }>;

@@ -1,14 +1,16 @@
 {
   "name": "spacecom-desafio-encontros",
-  "version": "0.3.0",
-  "description": "Desafio Trainee Tech Spacecom 2027 - deteccao de encontros",
+  "version": "1.0.0",
+  "description": "Detecção de encontros entre monitorados - Desafio Trainee Tech Spacecom 2027",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/main.js"
+    "start": "node dist/main.js",
+    "dev": "ts-node src/main.ts"
   },
   "devDependencies": {
     "typescript": "^5.6.3",
+    "ts-node": "^10.9.2",
     "@types/node": "^22.9.0"
   }
 }
